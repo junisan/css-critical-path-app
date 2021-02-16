@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+    <title>CSS Critical Path</title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.css'/>
+    <link rel='stylesheet' href='/stylesheets/loader.css'/>
+    <script type="module" src="/javascripts/index.js"></script>
+</head>
+<body class="py-4">
+
+<div class="container">
+    <h1>CSS Critical Path</h1>
+<!--    <p class="lead">Introduce la URL y el código CSS completo y se calculará el CSS mínimo para el viewport</p>-->
+
+    <div class="row mb-3">
+        <div class="col-5 themed-grid-col">
+            <div class="form-group">
+                <label for="urlTxt">URL</label>
+                <input type="url" id="urlTxt" class="form-control" placeholder="http://localhost/"/>
+                <small class="form-text text-muted">Requiere http/https.</small>
+            </div>
+        </div>
+        <div class="col-7 themed-grid-col">
+            <div class="form-group">
+                <label for="cssText">CSS Completo</label>
+                <textarea class="form-control" id="cssText" rows="10" placeholder="a{color: red}"></textarea>
+                <small id="cssTextLength" class="form-text text-muted">0 caracteres</small>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <button type="button" id="submitBtn" class="btn btn-primary btn-lg btn-block">Calcular</button>
+        </div>
+    </div>
+
+
+    <h2 class="mt-4">Resultado</h2>
+    <div class="sk-chase" style="display: none">
+        <div class="sk-chase-dot"></div>
+        <div class="sk-chase-dot"></div>
+        <div class="sk-chase-dot"></div>
+        <div class="sk-chase-dot"></div>
+        <div class="sk-chase-dot"></div>
+        <div class="sk-chase-dot"></div>
+    </div>
+    <textarea class="form-control" id="resultText" rows="10"></textarea>
+    <small id="resultLength" class="form-text text-muted">0 caracteres</small>
+</div>
+</body>
+</html>
