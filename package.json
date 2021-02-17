@@ -13,6 +13,7 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "node-sass-middleware": "0.11.0",
-    "penthouse": "^2.3.2"
+    "penthouse": "^2.3.2",
+    "puppeteer-core": "^7.1.0"
   }
 }

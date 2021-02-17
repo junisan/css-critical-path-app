@@ -1,5 +1,6 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const puppeteer = require('puppeteer-core');
 const penthouse = require('penthouse');
 
 /* GET home page. */
@@ -11,9 +12,23 @@ router.post('/critical', (req, res) => {
     const url = req.body.url;
     const css = Buffer.from(req.body.css, 'base64').toString();
 
+    const browserPromise = puppeteer.launch({
+        headless: true,
+        executablePath: process.env.CHROME_BIN || null,
+        args: ['--no-sandbox', '--headless', '--disable-gpu', '--disable-dev-shm-usage'],
+        ignoreHTTPSErrors: true,
+        defaultViewport: {
+            width: 1300,
+            height: 900
+        }
+    })
+
     penthouse({
         url: url,
-        cssString: css
+        cssString: css,
+        puppeteer: {
+            getBrowser: () => browserPromise
+        }
     })
         .then(criticalCSS => {
             const base64code = Buffer.from(criticalCSS).toString('base64');
