@@ -1,6 +1,11 @@
 const submitBtn = document.querySelector('#submitBtn');
+
 const url = document.querySelector("#urlTxt");
 const css = document.querySelector("#cssText");
+const width = document.querySelector("#widthTxt");
+const height = document.querySelector("#heightTxt");
+const nonHttp2XX = document.querySelector("#allowNon200Check");
+
 const cssLength = document.querySelector("#cssTextLength");
 const resultText = document.querySelector('#resultText');
 const resultLength = document.querySelector('#resultLength');
@@ -13,16 +18,22 @@ css.addEventListener('change', () => {
 submitBtn.addEventListener("click", () => {
     submitBtn.setAttribute('disabled', 'disabled');
     loader.style.display = 'block';
+
+    const options = {
+        url: url.value,
+        css: btoa(unescape(encodeURIComponent(css.value))),
+        width: width.value ? width.value : undefined,
+        height: height.value ? height.value : undefined,
+        expectHttpOk: nonHttp2XX.checked ? false : undefined
+    }
+
     fetch('/critical', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            url: url.value,
-            css: btoa(unescape(encodeURIComponent(css.value)))
-        })
+        body: JSON.stringify(options)
     })
         .then(result => result.json())
         .then(result => {
