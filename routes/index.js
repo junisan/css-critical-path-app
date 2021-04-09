@@ -1,42 +1,34 @@
 const express = require('express');
 const router = express.Router();
-const puppeteer = require('puppeteer-core');
-const penthouse = require('penthouse');
+const Critical = require('../src/critical');
+const validateRequest = require('./validator');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index', {title: 'Express'});
 });
 
-router.post('/critical', (req, res) => {
+router.post('/critical', validateRequest, (req, res) => {
     const url = req.body.url;
     const css = Buffer.from(req.body.css, 'base64').toString();
+    const height = req.body.height || 1000;
+    const width = req.body.width || 1300;
+    const expectHttpOk = req.body.hasOwnProperty('expectHttpOk') ? req.body.expectHttpOk : true;
 
-    const browserPromise = puppeteer.launch({
-        headless: true,
-        executablePath: process.env.CHROME_BIN || null,
-        args: ['--no-sandbox', '--headless', '--disable-gpu', '--disable-dev-shm-usage'],
-        ignoreHTTPSErrors: true,
-        defaultViewport: {
-            width: 1300,
-            height: 900
-        }
-    })
-
-    penthouse({
+    Critical({
         url: url,
-        cssString: css,
-        puppeteer: {
-            getBrowser: () => browserPromise
-        }
+        cssContent: css,
+        width: width,
+        height: height,
+        expectHttpOk: expectHttpOk
     })
-        .then(criticalCSS => {
-            const base64code = Buffer.from(criticalCSS).toString('base64');
-            return res.status(200).json({code: base64code});
-        })
-        .catch(err => {
-            return res.status(500).json({error: err.message});
-        });
+    .then(base64CSS => res.status(200).json({url, height, width, expectHttpOk, code: base64CSS}))
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message})
+    })
+
+
 });
 
 module.exports = router;
