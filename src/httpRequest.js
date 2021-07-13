@@ -1,23 +1,17 @@
-const http = require('http');
-const https = require('https');
+const axios = require('axios')
 
-const checkHttpOk = (url) => {
-    const promise = new Promise((resolve, reject) => {
-        const client = (url.indexOf("https") > -1) ? https : http;
-        client.request(url, { method: 'HEAD' }, (res) => {
-            if (res.statusCode >= 200 && res.statusCode <= 299) {
-                return resolve();
-            } else {
-                return reject(`Imposible to fetch ${url}. HTTP Resoponse was ${res.statusCode}.`)
-            }
-        })
-            .on('error', (err) => {
-                return reject(err);
-            }).end();
-
-    });
-
-    return promise;
+const getFinalUrl = async (url, allowNon200 = false) => {
+    try {
+        const response = await axios.get(url)
+        return response.request.res.hasOwnProperty('responseUrl') ? response.request.res.responseUrl : url
+    } catch (error) {
+        if (allowNon200) {
+            return error.response.request.res.hasOwnProperty('responseUrl') ? error.response.request.res.responseUrl : url
+        } else {
+            const httpCode = error.response ? error.response.statusCode : -1
+            return new Error(`Imposible to fetch ${url}. HTTP response was ${httpCode}.`)
+        }
+    }
 }
 
-module.exports = checkHttpOk;
+module.exports = getFinalUrl;
